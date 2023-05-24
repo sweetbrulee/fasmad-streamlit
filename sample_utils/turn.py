@@ -22,7 +22,7 @@ def get_ice_servers():
             "ACedabfc521e64238b1f3f550bad5300f6"  # os.environ["TWILIO_ACCOUNT_SID"]
         )
         auth_token = (
-            "13e2f26178544877e8ab1b0c7af24def"  # os.environ["TWILIO_AUTH_TOKEN"]
+            "e7d83d2f12ef248faee939f5f6d31501"  # os.environ["TWILIO_AUTH_TOKEN"]
         )
     except KeyError:
         logger.warning(
