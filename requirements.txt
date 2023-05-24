@@ -1,0 +1,16 @@
+pydub==0.25.1
+streamlit==1.22.0
+streamlit_webrtc==0.44.7
+twilio
+matplotlib
+numpy
+opencv-python
+pandas
+Pillow
+PyYAML
+requests
+scipy
+seaborn
+#tensorflow
+tqdm
+protobuf
