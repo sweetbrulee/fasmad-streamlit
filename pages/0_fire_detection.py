@@ -1,27 +1,30 @@
 import logging
-import queue
 from pathlib import Path
-from typing import List, NamedTuple
 
 import av
 import cv2
-import numpy as np
 import streamlit as st
 from streamlit_webrtc import WebRtcMode, webrtc_streamer
 
 from sample_utils.download import download_file
 from sample_utils.turn import get_ice_servers
 
-from my_Fire_Detection.interface import start_fire_detect2
+from service import FireDetection, MetadataQueueService
 
-st.title("My first Streamlit app")
-st.write("Hello, world")
+st.title("火灾识别监控系统")
+
+logger = logging.getLogger(__name__)
+
+metadata_queue = MetadataQueueService.use_queue()
 
 
 def callback(frame):
     img = frame.to_ndarray(format="bgr24")
 
-    im0, results = start_fire_detect2(img)
+    im0, results = FireDetection.create(img)
+
+    # process results into metadata
+    # and -> metadata_queue.put(processed_results)
 
     return av.VideoFrame.from_ndarray(im0, format="bgr24")
 
