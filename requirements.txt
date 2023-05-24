@@ -11,7 +11,7 @@ PyYAML
 requests
 scipy
 seaborn
-torch==1.10.0
-torchvision==0.11.1
+torch==1.9.0
+torchvision==0.10.0
 tqdm
 protobuf
