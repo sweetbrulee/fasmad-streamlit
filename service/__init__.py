@@ -1,5 +1,5 @@
 from .kernel.firedetection.interface import start_fire_detect2
-from .metadata_queue import MetadataQueueService
+from .message_queue import MetadataQueueService
 
 
 class InferenceService:

@@ -7,8 +7,7 @@ class AlarmAgent:
 
     def flush(self):
         # flush metadata queue, which then trigger the send, merge, output pipeline
-        # you can call this function after every one frame inference is done, or multiple frame inferences are.
-        # it's up to your design.
+        # you can call this function after every one frame inference is done, or multiple frame inferences are, it's up to your design.
         pass
 
     def add_send_rule(self, pred_rule: dict):
