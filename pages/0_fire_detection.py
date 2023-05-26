@@ -41,15 +41,19 @@ webrtc_ctx = create_webrtc_streamer(
 )
 
 
-if st.checkbox("识别结果", value=True):
-    if webrtc_ctx.state.playing:
+if webrtc_ctx.state.playing:
+    metadata_placeholder = None
+    if st.checkbox("识别结果", value=True):
         metadata_placeholder = st.empty()
-        # NOTE: The video transformation with fire detection and
-        # this loop displaying the result metadata are running
-        # in different threads asynchronously.
-        # Then the rendered video frames and the metadata displayed here
-        # are not strictly synchronized.
-        while True:
-            boxes = metadata_queue.get()[0].boxes
-            with metadata_placeholder.container():
-                st.write(boxes)
+
+    # NOTE: The video transformation with fire detection and
+    # this loop displaying the result metadata are running
+    # in different threads asynchronously.
+    # Then the rendered video frames and the metadata displayed here
+    # are not strictly synchronized.
+    while True:
+        boxes = metadata_queue.get()[0].boxes
+        if metadata_placeholder is None:
+            continue
+        with metadata_placeholder.container():
+            st.write(boxes)
