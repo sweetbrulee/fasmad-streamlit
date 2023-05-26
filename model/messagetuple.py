@@ -3,7 +3,8 @@ import numpy as np
 
 
 class DetectionMetadata(NamedTuple):
-    class_id: int
-    label: str
-    score: float
-    box: np.ndarray
+    boxes: object
+    # class_id: int
+    # label: str
+    # score: float
+    # box: np.ndarray
