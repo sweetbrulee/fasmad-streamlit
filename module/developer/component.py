@@ -1,17 +1,17 @@
 import streamlit as st
 
 
-def register_experimental_rerun_button():
-    """Register the use of the experimental rerun button.
+def mount_experimental_rerun_button():
+    """Mount the experimental rerun button on the page.
 
     Example
     -------
     ```python
     (In some page...)
-    >>> register_experimental_rerun_button()
+    >>> mount_experimental_rerun_button()
 
     (NOT)
-    >>> if register_experimental_rerun_button():
+    >>> if mount_experimental_rerun_button():
     ...     # do something...
     ```
     """
@@ -20,17 +20,17 @@ def register_experimental_rerun_button():
         st.experimental_rerun()
 
 
-def register_clear_all_cache_button():
-    """Register the use of the clear all cache button.
+def mount_clear_all_cache_button():
+    """Mount the clear all cache button on the page.
 
     Example
     -------
     ```python
     (In some page...)
-    >>> register_clear_all_cache_button()
+    >>> mount_clear_all_cache_button()
 
     (NOT)
-    >>> if register_clear_all_cache_button():
+    >>> if mount_clear_all_cache_button():
     ...     # do something...
     ```
     """

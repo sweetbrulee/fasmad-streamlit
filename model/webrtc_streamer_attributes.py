@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, Optional
 from dataclasses import dataclass
 
+from aiortc.mediastreams import MediaStreamTrack
 from streamlit_webrtc import Translations, WebRtcMode
 
 
 @dataclass
-class WebRTCStreamerAttributes:
+class WebRtcStreamerAttributes:
     """
     WebRTCStreamerAttributes is a data class that contains the attributes for the
     WebRTC streamer model.
@@ -20,3 +21,5 @@ class WebRTCStreamerAttributes:
     mode: WebRtcMode | None = None
     async_processing: bool | None = None
     translations: Translations | None = None
+    desired_playing_state: bool | None = None
+    source_video_track: MediaStreamTrack | None = None

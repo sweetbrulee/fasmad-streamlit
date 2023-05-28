@@ -1,9 +1,11 @@
 from streamlit_webrtc import Translations, WebRtcMode, webrtc_streamer
-from model.webrtc_streamer_attributes import WebRTCStreamerAttributes
+from model.webrtc_streamer_attributes import WebRtcStreamerAttributes
 from sample_utils.turn import get_ice_servers
 
+COMMON_RTC_CONFIG = {"iceServers": get_ice_servers()}
 
-def create_webrtc_streamer(webrtc_streamer_attributes: WebRTCStreamerAttributes):
+
+def create_webrtc_streamer(webrtc_streamer_attributes: WebRtcStreamerAttributes):
     def if_valid_then_return(value, default_value):
         return default_value if value is None else value
 
@@ -13,7 +15,7 @@ def create_webrtc_streamer(webrtc_streamer_attributes: WebRTCStreamerAttributes)
         key=attr.key,
         mode=if_valid_then_return(attr.mode, WebRtcMode.SENDRECV),
         rtc_configuration=if_valid_then_return(
-            attr.rtc_configuration, {"iceServers": get_ice_servers()}
+            attr.rtc_configuration, COMMON_RTC_CONFIG
         ),
         video_frame_callback=if_valid_then_return(attr.video_frame_callback, None),
         queued_video_frames_callback=if_valid_then_return(

@@ -4,9 +4,9 @@ import streamlit as st
 
 logger = logging.getLogger()
 
-st.title("streamlit-webrtc demo!")
+st.title("家庭安全监控")
 st.info(
-    """👈 Select the demo
+    """👈 选择页面
 """
 )
 
