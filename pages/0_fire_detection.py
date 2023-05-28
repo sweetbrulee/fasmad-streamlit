@@ -2,11 +2,11 @@ import logging
 import threading
 
 import av
-import cv2
 import streamlit as st
-from matplotlib import pyplot as plt
 from model.messagetuple import DetectionMetadata
+from model.webrtc_streamer_attributes import WebRTCStreamerAttributes
 from module.webrtc_streamer import create_webrtc_streamer
+from module.developer import use_experimental_rerun_button
 
 
 from service import FireDetection, MetadataQueueService
@@ -34,11 +34,13 @@ def callback(frame):
     return frame_ret
 
 
-webrtc_ctx = create_webrtc_streamer(
+WEBRTC_STREAMER_ATTR = WebRTCStreamerAttributes(
     key="fire-detection",
     video_frame_callback=callback,
     queued_video_frames_callback=None,
 )
+
+webrtc_ctx = create_webrtc_streamer(WEBRTC_STREAMER_ATTR)
 
 
 if webrtc_ctx.state.playing:
@@ -57,3 +59,17 @@ if webrtc_ctx.state.playing:
             continue
         with metadata_placeholder.container():
             st.write(boxes)
+
+
+# ------------------------------------------------------------\
+# ------------------------------------------------------------|
+# The following code is for developer use.                    |
+# ------------------------------------------------------------|
+# ------------------------------------------------------------/
+
+if st.checkbox("开发者选项"):
+    st.subheader("开发者选项")
+    st.write("这些选项仅供开发者使用。")
+
+    if use_experimental_rerun_button():
+        pass

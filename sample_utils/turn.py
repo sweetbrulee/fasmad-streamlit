@@ -25,6 +25,7 @@ def get_ice_servers():
             "e7d83d2f12ef248faee939f5f6d31501"  # os.environ["TWILIO_AUTH_TOKEN"]
         )
     except KeyError:
+        raise KeyError("TURN server is unavailable. Check your Twilio credentials.")
         logger.warning(
             "Twilio credentials are not set. Fallback to a free STUN server from Google."  # noqa: E501
         )

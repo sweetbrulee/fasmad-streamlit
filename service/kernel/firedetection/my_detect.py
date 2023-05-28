@@ -472,7 +472,7 @@ class yolo_detector:
 
             for *xyxy, conf, cls in reversed(det):
                 line = (cls, xyxy, conf)
-                print(line)
+                # print(line)
                 results.append(line)
 
                 c = int(cls)  # integer class
