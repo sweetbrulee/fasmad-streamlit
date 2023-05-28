@@ -142,3 +142,7 @@ cython_debug/
 # app data
 #models
 #data
+
+# signed files
+key.pem
+cert.pem

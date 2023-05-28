@@ -15,21 +15,18 @@ def get_ice_servers():
     but it is not stable and hardly works as some people reported like https://github.com/aiortc/aiortc/issues/832#issuecomment-1482420656  # noqa: E501
     See https://github.com/whitphx/streamlit-webrtc/issues/1213
     """
+    account_sid = ""
+    auth_token = ""
 
     # Ref: https://www.twilio.com/docs/stun-turn/api
     try:
-        account_sid = (
-            "ACedabfc521e64238b1f3f550bad5300f6"  # os.environ["TWILIO_ACCOUNT_SID"]
+        account_sid = os.environ["TWILIO_ACCOUNT_SID"]
+        auth_token = os.environ["TWILIO_AUTH_TOKEN"]
+    except KeyError as e:
+        logger.error(
+            "%s\nConsider adding your Twilio Account SID and Auth Token in the environment variables.",
+            str(e),
         )
-        auth_token = (
-            "e7d83d2f12ef248faee939f5f6d31501"  # os.environ["TWILIO_AUTH_TOKEN"]
-        )
-    except KeyError:
-        raise KeyError("TURN server is unavailable. Check your Twilio credentials.")
-        logger.warning(
-            "Twilio credentials are not set. Fallback to a free STUN server from Google."  # noqa: E501
-        )
-        return [{"urls": ["stun:stun.l.google.com:19302"]}]
 
     client = Client(account_sid, auth_token)
 
