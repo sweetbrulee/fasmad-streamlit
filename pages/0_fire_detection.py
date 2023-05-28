@@ -6,7 +6,10 @@ import streamlit as st
 from model.messagetuple import DetectionMetadata
 from model.webrtc_streamer_attributes import WebRTCStreamerAttributes
 from module.webrtc_streamer import create_webrtc_streamer
-from module.developer import use_experimental_rerun_button
+from module.developer import (
+    register_experimental_rerun_button,
+    register_clear_all_cache_button,
+)
 
 
 from service import FireDetection, MetadataQueueService
@@ -71,5 +74,5 @@ if st.checkbox("开发者选项"):
     st.subheader("开发者选项")
     st.write("这些选项仅供开发者使用。")
 
-    if use_experimental_rerun_button():
-        pass
+    register_experimental_rerun_button()
+    register_clear_all_cache_button()
