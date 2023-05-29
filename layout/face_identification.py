@@ -35,5 +35,5 @@ class FaceIdentificationLayout(BaseLayout):
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
     @override
-    def update_impl(self):
+    def update(self):
         print("🥰🥰🥰🥰🥰🥰🥰🥰🥰")

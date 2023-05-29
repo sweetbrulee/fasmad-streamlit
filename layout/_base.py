@@ -37,13 +37,7 @@ class BaseLayout(ABC):
     def mount(self):
         pass
 
-    @final
+    @abstractmethod
     def update(self):
         """Update the layout UI state and re-render the layout."""
-        # DO NOT implement in here! Go implement update logic in update_impl() instead.
-        if self.streaming:
-            self.update_impl()
-
-    @abstractmethod
-    def update_impl(self):
         pass
