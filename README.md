@@ -100,8 +100,8 @@ class FireDetectionLayout(BaseLayout):
 ### AI模型
 
 #### 使用AI模型接口
-- [火灾及烟雾识别模型接口说明](https://github.com/sweetbrulee/fasmad-streamlit/blob/67889a8d58fe4d3eca372b06fc9d64c7044f1dec/service/kernel/firedetection/README.md)
+- [火灾及烟雾识别模型接口说明](https://github.com/sweetbrulee/fasmad-streamlit/blob/master/service/kernel/firedetection/README.md)
 
 ### 贡献您的代码
 > 请参考以下教程：
-[教程](https://github.com/firstcontributions/first-contributions/blob/eba56b782a3dbbfad3c3f381601bd1e099e2b5ec/translations/README.zh-cn.md)
+[教程](https://github.com/firstcontributions/first-contributions/blob/main/translations/README.zh-cn.md)
