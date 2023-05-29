@@ -23,6 +23,9 @@
 ### 使用pip安装依赖
 ```pip install -r requirements.txt```
 
+如果提示Killed，可以尝试：  
+```pip install --no-cache-dir -r requirements.txt```
+
 ### 设置 Twilio token 和 SID
 1. 在 [Twilio](https://twilio.com/) 注册一个免费账号
 2. 从 [Twilio 控制台](https://www.twilio.com/console) 复制 auth token 和 account SID
