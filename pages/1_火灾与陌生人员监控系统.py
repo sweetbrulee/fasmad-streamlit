@@ -33,8 +33,8 @@ if any([face_layout.streaming, fire_layout.streaming]):
     # Then the rendered video frames and the metadata displayed here
     # are not strictly synchronized.
     while True:
-        fire_layout.update()
-        face_layout.update()
+        fire_layout.update_impl()
+        face_layout.update_impl()
 
         group, boxes = metadata_queue.get()[0]
         if metadata_placeholder is None:
