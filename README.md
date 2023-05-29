@@ -1,4 +1,5 @@
 # 入门指南
+> **注意**：如果您决定稍后要贡献代码，请先fork此项目。具体说明请见：[贡献您的代码](#贡献您的代码)
 ## 准备工作
 > 注意: 要求使用 Python == 3.9.x
 ### 使用pip安装依赖
@@ -79,3 +80,7 @@ class FireDetectionLayout(BaseLayout):
 - 在 ```module/alarm_agent.py``` 中实现报警逻辑。
 
 ### 开发AI模型
+
+### 贡献您的代码
+> 请参考以下教程：
+[教程](https://github.com/firstcontributions/first-contributions/blob/eba56b782a3dbbfad3c3f381601bd1e099e2b5ec/translations/README.zh-cn.md)
