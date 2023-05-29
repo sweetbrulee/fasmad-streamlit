@@ -6,15 +6,14 @@ yd = yolo_detector()
 
 
 def start_fire_detect2(image):
-    # img = cv2.imread('fire_000082.jpg')
-    # img = cv2.resize(img, (640, 480))
-    im0, results = yd.run(image)
+
+    results_data = yd.run(image)
 
     # if results:
     #     for i, pts in enumerate(results):
     #         cv2.rectangle(img, pts[0], pts[1], (0, 0, 255), 2)
     # cv2.imshow("video", im0)
-    return im0, results
+    return results_data
 
 
 def start_fire_detect(image):

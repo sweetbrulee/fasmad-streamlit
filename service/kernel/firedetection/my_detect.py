@@ -440,20 +440,16 @@ class yolo_detector:
 
     def run(self, frame):
         # Read image
-        im0 = frame  # BGR
-        assert im0 is not None, f"Image Not Found"
+        # im0 = frame  # BGR
+        # assert im0 is not None, f"Image Not Found"
 
         # Padded resize
 
-        img = letterbox(im0, self.imgsz, stride=self.stride, auto=self.pt)[0]
+        img = letterbox(frame, self.imgsz, stride=self.stride, auto=self.pt)[0]
 
         # Convert
         img = img.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
         img = np.ascontiguousarray(img)
-
-        # # (h, w, c) to (c, h, w)
-        # b, g, r = cv2.split(frame)
-        # im0 = np.array([b, g, r])
 
         im = torch.from_numpy(img).to(self.device)
         im = im.half() if self.half else im.float()  # uint8 to fp16/32
@@ -464,30 +460,22 @@ class yolo_detector:
         pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, max_det=5)
 
         results = []
-        annotator = Annotator(im0, line_width=3, example=str(self.names))
+        # annotator = Annotator(im0, line_width=3, example=str(self.names))
         for i, det in enumerate(pred):
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], frame.shape).round()
 
             for *xyxy, conf, cls in reversed(det):
-                line = (cls, xyxy, conf)
-                # print(line)
-                results.append(line)
+                results.append((int(cls.item()), [i.item() for i in xyxy], conf.item()))
 
-                c = int(cls)  # integer class
-                label = f"{self.names[c]} {conf:.2f}"
-                annotator.box_label(xyxy, label, color=colors(c, True))
+                # c = int(cls)  # integer class
+                # label = f"{self.names[c]} {conf:.2f}"
+                # annotator.box_label(xyxy, label, color=colors(c, True))
 
-            im0 = annotator.result()
+            # im0 = annotator.result()
 
-            # if det.numel():
-            #     x1, y1, x2, y2 = int(det[0, 0].item()), int(det[0, 1].item()), int(det[0, 2].item()), int(
-            #         det[0, 3].item())
-            #     lu = (x1, y1)
-            #     rd = (x2, y2)
-            #     results.append((lu, rd))
-        return im0, results
+        return results
 
 
 def main(opt, image):

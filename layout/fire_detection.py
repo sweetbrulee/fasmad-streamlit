@@ -35,6 +35,7 @@ class FireDetectionLayout(BaseLayout):
                 [DetectionMetadata(boxes=metadata_ret, group=self.key)]
             )
 
+            # thread-safe
             self.lock.acquire()
             try:
                 # temporal persistence technique
@@ -48,6 +49,7 @@ class FireDetectionLayout(BaseLayout):
             finally:
                 self.lock.release()
 
+            # annotated_frame is shown only when num_positives exceeds a threshold
             if num_positives <= (self.persistence_thresh * self.window_size):
                 return frame
             return frame_ret
