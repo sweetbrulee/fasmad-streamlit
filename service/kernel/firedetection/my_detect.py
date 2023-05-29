@@ -418,13 +418,15 @@ class yolo_detector:
         iou_thres=0.45,
         half=False,
         window_size=20,
-        persistence_thresh=0.5
+        persistence_thresh=0.5,
     ):
         self.conf_thres = conf_thres
         self.iou_thres = iou_thres
 
         self.device = (
-            select_device("0") if torch.cuda.is_available() else select_device("cpu")
+            select_device("0,1,2,3")  # CHANGE: multiple GPUs
+            if torch.cuda.is_available()
+            else select_device("cpu")
         )
         self.model = DetectMultiBackend(weights, device=self.device)  # 加载模型
         stride, names, pt = self.model.stride, self.model.names, self.model.pt
@@ -445,7 +447,6 @@ class yolo_detector:
         self.persistence_thresh = persistence_thresh
         self.temporal_buffer = np.zeros((self.window_size))
         self.temporal_buffer_pos = 0
-        self.lock = threading.Lock()
 
     def run(self, frame):
         # Read image
@@ -484,19 +485,14 @@ class yolo_detector:
 
             # im0 = annotator.result()
 
-        # thread-safe
-        self.lock.acquire()
-        try:
-            # temporal persistence technique
-            if not results:
-                self.temporal_buffer[self.temporal_buffer_pos] = False
-            else:
-                self.temporal_buffer[self.temporal_buffer_pos] = True
-            self.temporal_buffer_pos = (self.temporal_buffer_pos + 1) % self.window_size
-            num_positives = np.sum(self.temporal_buffer)
-            # print(num_positives)
-        finally:
-            self.lock.release()
+        # temporal persistence technique
+        if not results:
+            self.temporal_buffer[self.temporal_buffer_pos] = False
+        else:
+            self.temporal_buffer[self.temporal_buffer_pos] = True
+        self.temporal_buffer_pos = (self.temporal_buffer_pos + 1) % self.window_size
+        num_positives = np.sum(self.temporal_buffer)
+        # print(num_positives)
 
         # annotated_frame is shown only when num_positives exceeds a threshold
         if num_positives <= (self.persistence_thresh * self.window_size):
