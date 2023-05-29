@@ -79,7 +79,10 @@ class FireDetectionLayout(BaseLayout):
 
 - 在 ```module/alarm_agent.py``` 中实现报警逻辑。
 
-### 开发AI模型
+### AI模型
+
+#### 使用AI模型接口
+- [火灾及烟雾识别模型接口说明](https://github.com/sweetbrulee/fasmad-streamlit/blob/67889a8d58fe4d3eca372b06fc9d64c7044f1dec/service/kernel/firedetection/README.md)
 
 ### 贡献您的代码
 > 请参考以下教程：
