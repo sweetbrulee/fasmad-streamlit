@@ -2,8 +2,7 @@ from .my_detect import parse_opt, main, yolo_detector
 import cv2
 import time
 
-yd = yolo_detector()
-
+yd = yolo_detector(window_size=20, persistence_thresh=0.6)
 
 def start_fire_detect2(image):
 

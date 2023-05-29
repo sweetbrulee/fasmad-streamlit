@@ -1,8 +1,6 @@
 from typing_extensions import override
 import av
 import streamlit as st
-import numpy as np
-import threading
 from ._base import BaseLayout
 from model.messagetuple import DetectionMetadata
 from module.webrtc_streamer import create_webrtc_streamer
@@ -15,11 +13,6 @@ class FireDetectionLayout(BaseLayout):
     def __init__(self):
         super().__init__()
         self.key = "fire-detection"
-        self.window_size = 20
-        self.persistence_thresh = 0.5
-        self.temporal_buffer = np.zeros((self.window_size))
-        self.temporal_buffer_pos = 0
-        self.lock = threading.Lock()
 
     @override
     def mount(self):
@@ -35,23 +28,6 @@ class FireDetectionLayout(BaseLayout):
                 [DetectionMetadata(boxes=metadata_ret, group=self.key)]
             )
 
-            # thread-safe
-            self.lock.acquire()
-            try:
-                # temporal persistence technique
-                if not metadata_ret:
-                    self.temporal_buffer[self.temporal_buffer_pos] = False
-                else:
-                    self.temporal_buffer[self.temporal_buffer_pos] = True
-                self.temporal_buffer_pos = (self.temporal_buffer_pos + 1) % self.window_size
-                num_positives = np.sum(self.temporal_buffer)
-                print(num_positives)
-            finally:
-                self.lock.release()
-
-            # annotated_frame is shown only when num_positives exceeds a threshold
-            if num_positives <= (self.persistence_thresh * self.window_size):
-                return frame
             return frame_ret
 
         self.video_frame_callback = callback

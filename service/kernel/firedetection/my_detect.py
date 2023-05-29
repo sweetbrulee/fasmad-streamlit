@@ -29,7 +29,7 @@ import argparse
 import os
 import sys
 import time
-
+import threading
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -417,6 +417,8 @@ class yolo_detector:
         conf_thres=0.25,
         iou_thres=0.45,
         half=False,
+        window_size=20,
+        persistence_thresh=0.5
     ):
         self.conf_thres = conf_thres
         self.iou_thres = iou_thres
@@ -437,6 +439,13 @@ class yolo_detector:
         self.view_img = check_imshow()
         cudnn.benchmark = True  # set True to speed up constant image size inference
         self.model.warmup(imgsz=(1, 3, *self.imgsz), half=self.half)
+
+        # TPT
+        self.window_size = window_size
+        self.persistence_thresh = persistence_thresh
+        self.temporal_buffer = np.zeros((self.window_size))
+        self.temporal_buffer_pos = 0
+        self.lock = threading.Lock()
 
     def run(self, frame):
         # Read image
@@ -475,6 +484,23 @@ class yolo_detector:
 
             # im0 = annotator.result()
 
+        # thread-safe
+        self.lock.acquire()
+        try:
+            # temporal persistence technique
+            if not results:
+                self.temporal_buffer[self.temporal_buffer_pos] = False
+            else:
+                self.temporal_buffer[self.temporal_buffer_pos] = True
+            self.temporal_buffer_pos = (self.temporal_buffer_pos + 1) % self.window_size
+            num_positives = np.sum(self.temporal_buffer)
+            # print(num_positives)
+        finally:
+            self.lock.release()
+
+        # annotated_frame is shown only when num_positives exceeds a threshold
+        if num_positives <= (self.persistence_thresh * self.window_size):
+            return []
         return results
 
 
