@@ -37,10 +37,12 @@
 例如在 ```layout/fire_detection.py``` 中定义了火灾检测模块布局：
 ```python
 class FireDetectionLayout(BaseLayout):
+    @override
     def __init__(self):
         super().__init__()
         self.key = "fire-detection"
 
+    @override
     def mount(self):
         st.title("火灾识别监控")
 
@@ -51,7 +53,8 @@ class FireDetectionLayout(BaseLayout):
 
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
-    def update(self):
+    @override
+    def update_impl(self):
         ...
 ```
 以上代码是一个常见的样板代码(boilerplate)。
@@ -60,11 +63,19 @@ class FireDetectionLayout(BaseLayout):
 
 而 ```mount``` 是一个关键的方法，它用于与 ```page``` 当中的页面进行"挂钩"，使得页面能渲染此布局模块。
 
-```update``` 方法用于定义布局模块的循环式更新逻辑。详细使用方式请参考 ```pages``` 目录下任一页中的代码。
+您可以使用 ```update``` 方法执行布局模块的更新逻辑。详细使用方式请参考 ```pages``` 目录下任一页中的代码。**注意 ```update``` 方法的内部实现应该写在 ```update_impl``` 方法中**，这是为了保证 ```update``` 更新布局状态时会考虑是否正在进行视频串流。
 
-> **请注意：```update``` 方法的内部实现应该写在 ```update_impl``` 方法中**，这是为了保证 ```update``` 更新布局状态时会考虑是否正在进行视频串流。
+#### **细节**
 
+- 如果您想对每一个视频帧进行处理，例如使用AI模型进行检测。请定义 ```self.video_frame_callback``` 。它是一个回调函数，它会在视频帧更新时被调用。
 
-### 开发后端逻辑
+    > 虽然 ```self.video_frame_callback``` 与 ```update``` 同属于更新函数，但它们运行在不同的线程中，所以在使用同一资源时**务必考虑线程安全**。
+
+- ```self.metadata_queue_ref``` 是一个队列，它用于存储视频帧的元数据。例如视频帧的检测结果。您可以使用 ```self.metadata_queue_ref.get()``` 获取队列中的元数据。这在前后端交互信息时非常有用。
+    > 注意 ```self.metadata_queue_ref``` 属于服务型队列。意味着**它是共享而不是单独属于任何一个布局模块。** 布局模块只是保存了它的引用。
+
+### 开发报警逻辑
+
+- 在 ```module/alarm_agent.py``` 中实现报警逻辑。
 
 ### 开发AI模型

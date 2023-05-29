@@ -1,3 +1,4 @@
+from typing_extensions import override
 import av
 import streamlit as st
 from ._base import BaseLayout
@@ -8,10 +9,12 @@ from service import FireDetection
 
 
 class FireDetectionLayout(BaseLayout):
+    @override
     def __init__(self):
         super().__init__()
         self.key = "fire-detection"
 
+    @override
     def mount(self):
         st.title("火灾识别监控")
 
@@ -31,5 +34,6 @@ class FireDetectionLayout(BaseLayout):
 
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
-    def update(self):
+    @override
+    def update_impl(self):
         print("🔥🔥🔥🔥🔥🔥🔥🔥🔥")
