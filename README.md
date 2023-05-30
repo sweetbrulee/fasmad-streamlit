@@ -76,7 +76,7 @@ class FireDetectionLayout(BaseLayout):
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
     @override
-    def update_impl(self):
+    def update(self):
         ...
 ```
 以上代码是一个常见的样板代码(boilerplate)。
