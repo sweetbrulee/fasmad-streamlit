@@ -115,7 +115,6 @@ class Face_Recognizer:
         # 1. 读取存放所有人脸特征的 csv / Read known faces from "features.all.csv"
         if self.get_face_database():
             faces = detector(img_rd, 0)
-            kk = cv2.waitKey(1)
 
             # self.draw_note(img_rd)
             self.current_frame_face_feature_list = []
@@ -182,24 +181,34 @@ class Face_Recognizer:
 
             logging.debug("Faces in camera now: %s", self.current_frame_face_name_list)
 
-            cv2.imshow("camera", img_with_name)
-            k = cv2.waitKey(0)  # waitKey代表读取键盘的输入，0代表一直等待
-            if k == 27:  # 键盘上Esc键的键值
-                cv2.destroyAllWindows()
+            return img_with_name
+            # cv2.imshow("camera", img_with_name)
+            # k = cv2.waitKey(0)  # waitKey代表读取键盘的输入，0代表一直等待
+            # if k == 27:  # 键盘上Esc键的键值
+            #     cv2.destroyAllWindows()
 
-    def run(self):
-        img_rd = cv2.imread(path)
-        print("1111111111\n")
-        self.process(img_rd)
-        print("1111111111\n")
+    def run(self,img_rd):
+        # img_rd = cv2.imread(path)
+        # print("1111111111\n")
+        result = self.process(img_rd)
+        return [self.current_frame_face_name_list,result]
+        # print("1111111111\n")
 
 
-def main():
+def main(img_rd):
     # logging.basicConfig(level=logging.DEBUG) # Set log level to 'logging.DEBUG' to print debug info of every frame
     logging.basicConfig(level=logging.INFO)
     Face_Recognizer_con = Face_Recognizer()
-    Face_Recognizer_con.run()
+    return Face_Recognizer_con.run(img_rd)
 
 
 if __name__ == '__main__':
-    main()
+    # img_rd = np.array([1,2,5,6,7])
+    path1 = "data/data_faces_from_camera/person_1_hwy/img_face_1.jpg"
+    img_rd = cv2.imread(path1)
+    name_list,img_with_name = main(img_rd)
+    print(name_list)
+    cv2.imshow("camera", img_with_name)
+    k = cv2.waitKey(0)  # waitKey代表读取键盘的输入，0代表一直等待
+    if k == 27:  # 键盘上Esc键的键值
+        cv2.destroyAllWindows()
