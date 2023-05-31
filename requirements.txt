@@ -11,11 +11,13 @@ PyYAML
 requests
 scipy
 seaborn
+tqdm
+protobuf
 
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==1.9.0+cu111
 torchvision==0.10.0+cu111
 
-tqdm
-protobuf
+dlib-binary
+scikit-image
 
