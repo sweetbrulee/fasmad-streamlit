@@ -18,3 +18,4 @@ torchvision==0.10.0+cu111
 
 tqdm
 protobuf
+
