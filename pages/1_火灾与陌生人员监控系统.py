@@ -27,7 +27,7 @@ if any([face_layout.streaming, fire_layout.streaming]):
     if st.checkbox("识别结果", value=True):
         metadata_placeholder = st.empty()
 
-    # NOTE: The video transformation with fire detection and
+    # NOTE: The video transformation with detection and
     # this loop displaying the result metadata are running
     # in different threads asynchronously.
     # Then the rendered video frames and the metadata displayed here

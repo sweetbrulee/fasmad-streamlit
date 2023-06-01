@@ -29,7 +29,7 @@ import argparse
 import os
 import sys
 import time
-
+import threading
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -417,12 +417,16 @@ class yolo_detector:
         conf_thres=0.25,
         iou_thres=0.45,
         half=False,
+        window_size=20,
+        persistence_thresh=0.5,
     ):
         self.conf_thres = conf_thres
         self.iou_thres = iou_thres
 
         self.device = (
-            select_device("0") if torch.cuda.is_available() else select_device("cpu")
+            select_device("0,1,2,3")  # CHANGE: multiple GPUs
+            if torch.cuda.is_available()
+            else select_device("cpu")
         )
         self.model = DetectMultiBackend(weights, device=self.device)  # 加载模型
         stride, names, pt = self.model.stride, self.model.names, self.model.pt
@@ -438,22 +442,24 @@ class yolo_detector:
         cudnn.benchmark = True  # set True to speed up constant image size inference
         self.model.warmup(imgsz=(1, 3, *self.imgsz), half=self.half)
 
+        # TPT
+        self.window_size = window_size
+        self.persistence_thresh = persistence_thresh
+        self.temporal_buffer = np.zeros((self.window_size))
+        self.temporal_buffer_pos = 0
+
     def run(self, frame):
         # Read image
-        im0 = frame  # BGR
-        assert im0 is not None, f"Image Not Found"
+        # im0 = frame  # BGR
+        # assert im0 is not None, f"Image Not Found"
 
         # Padded resize
 
-        img = letterbox(im0, self.imgsz, stride=self.stride, auto=self.pt)[0]
+        img = letterbox(frame, self.imgsz, stride=self.stride, auto=self.pt)[0]
 
         # Convert
         img = img.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
         img = np.ascontiguousarray(img)
-
-        # # (h, w, c) to (c, h, w)
-        # b, g, r = cv2.split(frame)
-        # im0 = np.array([b, g, r])
 
         im = torch.from_numpy(img).to(self.device)
         im = im.half() if self.half else im.float()  # uint8 to fp16/32
@@ -464,30 +470,34 @@ class yolo_detector:
         pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, max_det=5)
 
         results = []
-        annotator = Annotator(im0, line_width=3, example=str(self.names))
+        # annotator = Annotator(im0, line_width=3, example=str(self.names))
         for i, det in enumerate(pred):
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], frame.shape).round()
 
             for *xyxy, conf, cls in reversed(det):
-                line = (cls, xyxy, conf)
-                # print(line)
-                results.append(line)
+                results.append((int(cls.item()), [i.item() for i in xyxy], conf.item()))
 
-                c = int(cls)  # integer class
-                label = f"{self.names[c]} {conf:.2f}"
-                annotator.box_label(xyxy, label, color=colors(c, True))
+                # c = int(cls)  # integer class
+                # label = f"{self.names[c]} {conf:.2f}"
+                # annotator.box_label(xyxy, label, color=colors(c, True))
 
-            im0 = annotator.result()
+            # im0 = annotator.result()
 
-            # if det.numel():
-            #     x1, y1, x2, y2 = int(det[0, 0].item()), int(det[0, 1].item()), int(det[0, 2].item()), int(
-            #         det[0, 3].item())
-            #     lu = (x1, y1)
-            #     rd = (x2, y2)
-            #     results.append((lu, rd))
-        return im0, results
+        # temporal persistence technique
+        if not results:
+            self.temporal_buffer[self.temporal_buffer_pos] = False
+        else:
+            self.temporal_buffer[self.temporal_buffer_pos] = True
+        self.temporal_buffer_pos = (self.temporal_buffer_pos + 1) % self.window_size
+        num_positives = np.sum(self.temporal_buffer)
+        # print(num_positives)
+
+        # annotated_frame is shown only when num_positives exceeds a threshold
+        if num_positives <= (self.persistence_thresh * self.window_size):
+            return []
+        return results
 
 
 def main(opt, image):

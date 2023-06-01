@@ -23,6 +23,9 @@
 ### 使用pip安装依赖
 ```pip install -r requirements.txt```
 
+如果提示Killed，可以尝试：  
+```pip install --no-cache-dir -r requirements.txt```
+
 ### 设置 Twilio token 和 SID
 1. 在 [Twilio](https://twilio.com/) 注册一个免费账号
 2. 从 [Twilio 控制台](https://www.twilio.com/console) 复制 auth token 和 account SID
@@ -73,7 +76,7 @@ class FireDetectionLayout(BaseLayout):
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
     @override
-    def update_impl(self):
+    def update(self):
         ...
 ```
 以上代码是一个常见的样板代码(boilerplate)。
@@ -82,13 +85,14 @@ class FireDetectionLayout(BaseLayout):
 
 而 ```mount``` 是一个关键的方法，它用于与 ```page``` 当中的页面进行"挂钩"，使得页面能渲染此布局模块。
 
-您可以使用 ```update``` 方法执行布局模块的更新逻辑。详细使用方式请参考 ```pages``` 目录下任一页中的代码。**注意 ```update``` 方法的内部实现应该写在 ```update_impl``` 方法中**，这是为了保证 ```update``` 更新布局状态时会考虑是否正在进行视频串流。
+您可以使用 ```update``` 方法执行UI布局的状态更新。详细使用方式请参考 ```pages``` 目录下任一页中的代码。~~**注意 ```update``` 方法的内部实现应该写在 ```update_impl``` 方法中**，这是为了保证 ```update``` 更新布局状态时会考虑是否正在进行视频串流。~~   
+  > **更新**：现在请直接将更新逻辑写在 ```update``` 方法中。
 
 #### 细节
 
 - 如果您想对每一个视频帧进行处理，例如使用AI模型进行检测。请定义 ```self.video_frame_callback``` 。它是一个回调函数，它会在视频帧更新时被调用。
 
-    > 虽然 ```self.video_frame_callback``` 与 ```update``` 同属于更新函数，但它们运行在不同的线程中，所以在使用同一资源时**务必考虑线程安全**。
+    > 虽然 ```self.video_frame_callback``` 与 ```update``` 同属于更新函数，但它们更新的对象不同，且运行在不同的线程中，在使用同一资源时**务必考虑线程安全**。
 
 - ```self.metadata_queue_ref``` 是一个队列，它用于存储视频帧的元数据。例如视频帧的检测结果。您可以使用 ```self.metadata_queue_ref.get()``` 获取队列中的元数据。这在前后端交互信息时非常有用。
     > 注意 ```self.metadata_queue_ref``` 属于服务型队列。意味着**它是共享而不是单独属于任何一个布局模块。** 布局模块只是保存了它的引用。
@@ -100,8 +104,8 @@ class FireDetectionLayout(BaseLayout):
 ### AI模型
 
 #### 使用AI模型接口
-- [火灾及烟雾识别模型接口说明](https://github.com/sweetbrulee/fasmad-streamlit/blob/67889a8d58fe4d3eca372b06fc9d64c7044f1dec/service/kernel/firedetection/README.md)
+- [火灾及烟雾识别模型接口说明](https://github.com/sweetbrulee/fasmad-streamlit/blob/master/service/kernel/firedetection/README.md)
 
 ### 贡献您的代码
 > 请参考以下教程：
-[教程](https://github.com/firstcontributions/first-contributions/blob/eba56b782a3dbbfad3c3f381601bd1e099e2b5ec/translations/README.zh-cn.md)
+[教程](https://github.com/firstcontributions/first-contributions/blob/main/translations/README.zh-cn.md)
