@@ -30,3 +30,7 @@ class FaceIdentification(InferenceService):
     @classmethod
     def register(cls, name, faces: list):
         my_features_extraction_to_csv.main(faces, name)
+
+    @classmethod
+    def clear(cls):
+        my_features_extraction_to_csv.clear()

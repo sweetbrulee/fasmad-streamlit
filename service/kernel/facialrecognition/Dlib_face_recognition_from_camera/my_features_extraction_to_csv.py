@@ -74,6 +74,17 @@ def return_features_mean_personX(img_rd_set):
     return features_mean_personX
 
 
+def clear():
+    # 清除之前存的人脸数据 / Clear known faces data
+    path_features_known_csv = "service/kernel/facialrecognition/Dlib_face_recognition_from_camera/data/features_all.csv"
+
+    # clear all data except row 1
+    csv_rd = pd.read_csv(path_features_known_csv, header=None)
+
+    csv_rd = csv_rd.iloc[0:1, :]
+    csv_rd.to_csv(path_features_known_csv, index=False, header=None)
+
+
 def main(img_rd_set, person_name):
     logging.basicConfig(level=logging.INFO)
     path_features_known_csv = "service/kernel/facialrecognition/Dlib_face_recognition_from_camera/data/features_all.csv"

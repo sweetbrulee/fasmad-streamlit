@@ -34,6 +34,9 @@ name = st.text_input("请输入姓名")
 if st.button("提交"):
     FaceIdentification.register(name, pictures)
 
+if st.button("清除所有的人脸数据"):
+    FaceIdentification.clear()
+
 st.image(pictures, channels="BGR", width=100, output_format="JPEG")
 
 
