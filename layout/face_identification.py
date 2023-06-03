@@ -18,24 +18,25 @@ class FaceIdentificationLayout(BaseLayout):
     def mount(self):
         st.title("陌生人员监控")
 
-        def callback(frame):
+        async def queued_callback(frames: list):
+            frame = frames[0]
             img = frame.to_ndarray(format="bgr24")
             ret = FaceIdentification.create(img)
             metadata_ret = ret[0]
             img_ret = ret[1]
-            frame_ret = av.VideoFrame.from_ndarray(img_ret, format="bgr24")
+            # frame_ret = av.VideoFrame.from_ndarray(img_ret, format="bgr24")
 
             # put into the queue
             self.metadata_queue_ref.put(
                 [DetectionMetadata(boxes=metadata_ret, group=self.key)]
             )
 
-            return frame_ret
+            return frames
 
-        self.video_frame_callback = callback
+        self.queued_video_frames_callback = queued_callback
 
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
     @override
     def update(self):
-        print("🥰🥰🥰🥰🥰🥰🥰🥰🥰")
+        pass

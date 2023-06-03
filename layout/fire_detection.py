@@ -19,7 +19,8 @@ class FireDetectionLayout(BaseLayout):
     def mount(self):
         st.title("火灾识别监控")
 
-        def callback(frame):
+        async def queued_callback(frames: list):
+            frame = frames[0]
             img = frame.to_ndarray(format="bgr24")
             metadata_ret = FireDetection.create(img)
             # frame_ret = av.VideoFrame.from_ndarray(img, format="bgr24")
@@ -29,12 +30,12 @@ class FireDetectionLayout(BaseLayout):
                 [DetectionMetadata(boxes=metadata_ret, group=self.key)]
             )
 
-            return frame
+            return frames
 
-        self.video_frame_callback = callback
+        self.queued_video_frames_callback = queued_callback
 
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
     @override
     def update(self):
-        print("🔥🔥🔥🔥🔥🔥🔥🔥🔥")
+        pass
