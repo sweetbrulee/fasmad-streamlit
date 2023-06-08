@@ -37,6 +37,10 @@ class FaceIdentificationLayout(BaseLayout):
 
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
+        if st.button("清除所有的人脸数据"):
+            FaceIdentification.clear()
+            st.success("清除成功！")
+
     @override
     def update(self):
         pass

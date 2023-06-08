@@ -20,7 +20,6 @@ face_layout, fire_layout = FaceIdentificationLayout(), FireDetectionLayout()
 
 face_layout.mount()
 fire_layout.mount()
-# mount_mixer_layout()
 
 if any([face_layout.streaming, fire_layout.streaming]):
     metadata_placeholder = None
