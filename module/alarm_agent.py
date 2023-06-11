@@ -1,35 +1,59 @@
+import math
+import queue
+import time
 from service.message_queue import MetadataQueueService
 
-class AlarmAgent:
-    def __init__(self):
-        pass
+metadata_queue = MetadataQueueService.use_queue()
 
-    def merge(self, alarm_batch: list):
-        queue = MetadataQueueService.use_queue()
-        queue.get()
+#位置
+class Pos:
+    x=0
+    y=0
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
 
-    def flush(self):
-        # flush metadata queue, which then trigger the send, merge, output pipeline
-        # you can call this function after every one frame inference is done, or multiple frame inferences are, it's up to your design.
+#帧结果
+class FrameResult:
+    posDown=Pos(0,0)
+    posUp=Pos(0,0)
+    believe=0
+    isFire=False
+    def __init__(self,posDown,posUp,believe,isFire):
+        self.posDown=posDown
+        self.posUp=posUp
+        self.believe=believe
+        self.isFire=isFire
+
+    def isDanger(self):
+        return abs((self.posUp.x-self.posDown.x)*(self.posUp.y-self.posDown.y))>0 and self.isFire==True and believe>=0.6
+
+#每秒结果
+class TreeSecResult:
+    frameResultList=list()
+    def __init__(self,frameResultList):
+        self.frameResultList=frameResultList
+
+    def isDanger(self):
+        return __countDangerFrame(self)/len(self.frameResultList)>0.5
+
+    def __countDangerFrame(self):
+        count=0
+        for i in self.frameResultList:
+            if i.isDanger():
+                count+=1
+        return count
+
+#处理逻辑
+#处理队列
+#从检测到有火灾可能开始计算时间
+#如果有火灾风险则开始将3秒为一个单位将结果进行判断
+rQueue=queue.Queue()
+def alarm():
+    treeSecResult=rQueue.get()
+    if(treeSecResult.isDanger()):
+        print("有火警!")
+        del treeSecResult
+        #time.sleep(3)响铃3秒
 
 
-        pass
-
-    def add_send_rule(self, pred_rule: dict):
-        # each pred rule is a callable function which returns a bool
-        # will iterate metadata queue and filter out the alarms that match the rule, then send them
-
-        pass
-
-    def del_send_rule(self, keys: list):
-
-        pass
-
-    def add_merge_rule(self, pred_rule: dict):
-        # remember the order: send the batch -> merge the batch -> output results on the screen
-
-        pass
-
-    def del_merge_rule(self, keys: list):
-
-        pass

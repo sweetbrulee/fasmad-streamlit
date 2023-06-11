@@ -37,15 +37,15 @@ if any([face_layout.streaming, fire_layout.streaming]):
         fire_layout.update()
         face_layout.update()
 
-        group, boxes = metadata_queue.get()[0]
+        #group, boxes = metadata_queue.get()[0]
 
-        if metadata_placeholder is None:
-            continue
-        if queue_size_placeholder is None:
-            continue
-        with metadata_placeholder.container():
-            st.write(f"组别: {group}")
-            st.write(boxes)
+        # if metadata_placeholder is None:
+        #     continue
+        # if queue_size_placeholder is None:
+        #     continue
+        # with metadata_placeholder.container():
+        #     st.write(f"组别: {group}")
+        #     st.write(boxes)
         with queue_size_placeholder.container():
             st.write(f"队列大小: {metadata_queue.qsize()}")
 
