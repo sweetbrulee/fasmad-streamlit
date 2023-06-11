@@ -37,4 +37,4 @@ class FireDetectionLayout(BaseLayout):
 
     @override
     def update(self):
-        print("🔥🔥🔥🔥🔥🔥🔥🔥🔥")
+        pass

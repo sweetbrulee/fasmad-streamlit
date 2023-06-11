@@ -36,12 +36,12 @@ if any([face_layout.streaming, fire_layout.streaming]):
         fire_layout.update()
         face_layout.update()
 
-        group, boxes = metadata_queue.get()[0]
-        if metadata_placeholder is None:
-            continue
-        with metadata_placeholder.container():
-            st.write(f"组别: {group}")
-            st.write(boxes)
+        #group, boxes = metadata_queue.get()[0]
+        #if metadata_placeholder is None:
+        #    continue
+        #with metadata_placeholder.container():
+        #    st.write(f"组别: {group}")
+        #    st.write(boxes)
 
 # ------------------------------------------------------------\
 # ------------------------------------------------------------|

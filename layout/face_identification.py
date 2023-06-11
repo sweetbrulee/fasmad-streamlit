@@ -38,4 +38,4 @@ class FaceIdentificationLayout(BaseLayout):
 
     @override
     def update(self):
-        print("🥰🥰🥰🥰🥰🥰🥰🥰🥰")
+        pass
