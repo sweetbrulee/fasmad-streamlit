@@ -18,7 +18,7 @@ img_file_buffers = [
         "### 请将人脸置于框内，点击拍照按钮",
         key=f"facial_register_camera_input_{i}",
     )
-    for i in range(5)
+    for i in range(1)
 ]
 
 for img_file_buffer in img_file_buffers:
@@ -33,9 +33,7 @@ name = st.text_input("请输入姓名")
 
 if st.button("提交"):
     FaceIdentification.register(name, pictures)
-
-if st.button("清除所有的人脸数据"):
-    FaceIdentification.clear()
+    st.success("注册成功！")
 
 st.image(pictures, channels="BGR", width=100, output_format="JPEG")
 
