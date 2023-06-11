@@ -15,8 +15,10 @@ tqdm
 protobuf
 
 --find-links https://download.pytorch.org/whl/torch_stable.html
-torch==1.9.0+cu111
-torchvision==0.10.0+cu111
+#torch==1.9.0+cu111
+#torchvision==0.10.0+cu111
+torch==1.9.0+cpu
+torchvision==0.10.0+cpu
 
 dlib-bin
 scikit-image

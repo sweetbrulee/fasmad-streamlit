@@ -424,9 +424,7 @@ class yolo_detector:
         self.iou_thres = iou_thres
 
         self.device = (
-            select_device("0,1,2,3")  # CHANGE: multiple GPUs
-            if torch.cuda.is_available()
-            else select_device("cpu")
+            select_device("0") if torch.cuda.is_available() else select_device("cpu")
         )
         self.model = DetectMultiBackend(weights, device=self.device)  # 加载模型
         stride, names, pt = self.model.stride, self.model.names, self.model.pt
