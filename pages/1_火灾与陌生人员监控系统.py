@@ -8,6 +8,7 @@ from module.developer import (
     mount_clear_all_cache_button,
 )
 from service.message_queue import MetadataQueueService
+from module.alarm_agent import FaceAlarmAgent, FireAlarmAgent
 
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,9 @@ lock = threading.Lock()  # for thread-safety
 
 metadata_queue = MetadataQueueService.use_queue()
 
+fire_alarm_agent = FireAlarmAgent(group="fire-detection")
+face_alarm_agent = FaceAlarmAgent(group="face-identification")
+
 face_layout, fire_layout = FaceIdentificationLayout(), FireDetectionLayout()
 
 face_layout.mount()
@@ -23,10 +27,21 @@ fire_layout.mount()
 
 if any([face_layout.streaming, fire_layout.streaming]):
     metadata_placeholder = None
-    queue_size_placeholder = None
-    if st.checkbox("识别结果", value=True):
+
+    if fire_layout.alarm_placeholder:
+        fire_alarm_agent.bind_container_callfunc(
+            fire_layout.alarm_placeholder.container
+        )
+    if face_layout.alarm_placeholder:
+        face_alarm_agent.bind_container_callfunc(
+            face_layout.alarm_placeholder.container
+        )
+
+    fire_alarm_agent.reset_timers()
+    face_alarm_agent.reset_timers()
+
+    if st.checkbox("识别数据", value=False):
         metadata_placeholder = st.empty()
-        queue_size_placeholder = st.empty()
 
     # NOTE: The video transformation with detection and
     # this loop displaying the result metadata are running
@@ -39,15 +54,14 @@ if any([face_layout.streaming, fire_layout.streaming]):
 
         group, boxes = metadata_queue.get()[0]
 
+        fire_alarm_agent.run(group, boxes)
+        face_alarm_agent.run(group, boxes)
+
         if metadata_placeholder is None:
-            continue
-        if queue_size_placeholder is None:
             continue
         with metadata_placeholder.container():
             st.write(f"组别: {group}")
             st.write(boxes)
-        with queue_size_placeholder.container():
-            st.write(f"队列大小: {metadata_queue.qsize()}")
 
 # ------------------------------------------------------------\
 # ------------------------------------------------------------|

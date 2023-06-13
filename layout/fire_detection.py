@@ -36,6 +36,8 @@ class FireDetectionLayout(BaseLayout):
 
         self.webrtc_ctx = create_webrtc_streamer(self.webrtc_streamer_attributes)
 
+        self.mount_alarm_placeholder()
+
     @override
     def update(self):
         pass

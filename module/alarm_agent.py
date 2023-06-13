@@ -1,26 +1,109 @@
+from time import process_time
+from typing_extensions import override
+
+import streamlit as st
+from .alarm_filter_logic import isStranger, isDanger
+
+WINDOWS_SIZE_SEC = 5
+
+
 class AlarmAgent:
-    def __init__(self):
+    def __init__(self, group):
+        time = process_time()
+        self.timer_start = time
+        self.timer_end = time
+        self.group: str = group
+        self.container_callfunc = None
+        self.initial = True
+
+    def start_timer(self):
+        self.timer_start = process_time()
+
+    def end_timer(self):
+        self.timer_end = process_time()
+
+    def reset_timers(self):
+        time = process_time()
+        self.timer_start = time
+        self.timer_end = time
+
+    def bind_container_callfunc(self, container_func):
+        self.container_callfunc = container_func
+
+    def run(self, group_this_frame, boxes):
+        if group_this_frame != self.group:
+            return
+        filtered_count = self._filtered_count(boxes)
+        if filtered_count > 0:
+            self.start_timer()
+        else:
+            self.end_timer()
+
+        elapsed = self.timer_end - self.timer_start
+        #print(f"⏲️⏲️⏲️: {elapsed} | {'❌' if self.is_alarm_canceled(elapsed) else '✅'}")
+        self.on_alarm_canceled() if self.is_alarm_canceled(
+            elapsed
+        ) else self.on_alarm_persistent(filtered_count)
+
+    def is_alarm_canceled(self, elapsed):
+        # elapsed 小于0: 检测到危险
+        # elapsed 0~WINDOWS_SIZE_SEC: 没有检测到危险，准备取消报警
+        # elapsed 大于WINDOWS_SIZE_SEC: 取消报警
+        if elapsed > WINDOWS_SIZE_SEC:
+            return True
+        if 0 <= elapsed <= WINDOWS_SIZE_SEC:
+            if self.initial:
+                return True
+            return False
+        if elapsed < 0:
+            self.initial = False
+            return False
+
+    def on_alarm_canceled(self):
         pass
 
-    def merge(self, alarm_batch: list):
+    def on_alarm_persistent(self, filtered_count):
         pass
 
-    def flush(self):
-        # flush metadata queue, which then trigger the send, merge, output pipeline
-        # you can call this function after every one frame inference is done, or multiple frame inferences are, it's up to your design.
+    def _filtered_count(self, boxes):
         pass
 
-    def add_send_rule(self, pred_rule: dict):
-        # each pred rule is a callable function which returns a bool
-        # will iterate metadata queue and filter out the alarms that match the rule, then send them
-        pass
 
-    def del_send_rule(self, keys: list):
-        pass
+class FireAlarmAgent(AlarmAgent):
+    @override
+    def on_alarm_canceled(self):
+        if not self.container_callfunc:
+            return
+        with self.container_callfunc():
+            st.info("未检测到烟雾或火灾。")
 
-    def add_merge_rule(self, pred_rule: dict):
-        # remember the order: send the batch -> merge the batch -> output results on the screen
-        pass
+    @override
+    def on_alarm_persistent(self, filtered_count):
+        if not self.container_callfunc:
+            return
+        with self.container_callfunc():
+            st.warning(f"检测到{filtered_count}处可能有烟雾或火灾。", icon="🔥")
 
-    def del_merge_rule(self, keys: list):
-        pass
+    @override
+    def _filtered_count(self, boxes):
+        return isDanger(boxes)
+
+
+class FaceAlarmAgent(AlarmAgent):
+    @override
+    def on_alarm_canceled(self):
+        if not self.container_callfunc:
+            return
+        with self.container_callfunc():
+            st.info("未检测到陌生人。")
+
+    @override
+    def on_alarm_persistent(self, filtered_count):
+        if not self.container_callfunc:
+            return
+        with self.container_callfunc():
+            st.warning(f"检测到{filtered_count}处可能有陌生人员。", icon="👤")
+
+    @override
+    def _filtered_count(self, boxes):
+        return isStranger(boxes)

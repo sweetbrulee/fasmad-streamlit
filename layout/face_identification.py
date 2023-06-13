@@ -41,6 +41,8 @@ class FaceIdentificationLayout(BaseLayout):
             FaceIdentification.clear()
             st.success("清除成功！")
 
+        self.mount_alarm_placeholder()
+
     @override
     def update(self):
         pass

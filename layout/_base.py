@@ -12,6 +12,7 @@ class BaseLayout(ABC):
     def __init__(self):
         self.image_container = {"img": None}
         self.metadata_container = {"metadata": None}
+        self.alarm_placeholder = None
         self.metadata_queue_ref = MetadataQueueService.use_queue()
         self.metadata_placeholder_ref = None
         self.key = ""
@@ -20,6 +21,9 @@ class BaseLayout(ABC):
         self.queued_video_frames_callback = None
         self.webrtc_ctx = None
         self._webrtc_streamer_attributes = None
+
+    def mount_alarm_placeholder(self):
+        self.alarm_placeholder = st.empty()
 
     @property
     def webrtc_streamer_attributes(self):
