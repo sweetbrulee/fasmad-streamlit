@@ -1,0 +1,32 @@
+@startuml
+title 前后端系统
+
+actor 用户 as User
+
+participant "前端" as Layout
+participant AI
+participant "后端" as AlarmFilter
+queue 数据队列 as Queue
+
+User -> Layout: 访问页面
+Layout -> Layout: 查找可用的ICE服务器
+Layout -> Layout: 创建WebRTC串流器上下文
+Layout -> Layout: 挂载页面布局
+User -> Layout: 启动检测
+
+par
+ loop
+  Layout -> Queue: 从队列中获取数据
+  Queue --> Layout: 返回数据
+  Layout -> AlarmFilter: 过滤和合并报警
+  AlarmFilter --> Layout: 处理完成
+  Layout -> Layout: 根据已处理的报警\n更新UI状态
+ end
+else 子线程
+ loop
+  Layout -> AI: 交付给AI模型处理序列帧
+  AI --> Layout: 处理完成
+  Layout -> Queue: 推入数据至队列
+ end
+end
+@enduml

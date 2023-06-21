@@ -1,0 +1,30 @@
+@startuml
+allow_mixing
+
+together {
+    circle "[AI] Fire Detection Service" as FDModel
+    circle "[AI] Face Recognition Service" as FRModel
+    database "Face Features Table" as DB
+}
+class FaceRecognizer
+
+FaceRecognizer -- FRModel
+FaceIdentification -- FRModel
+FRModel -r- DB
+FireDetection -- FDModel
+FaceIdentification *-- FaceRecognizer: has 1 >
+
+class InferenceService {
+    // This is a singleton class, cannot be initialized
+}
+
+class FireDetection extends InferenceService {
+    +create(frame): object
+}
+
+class FaceIdentification extends InferenceService {
+    +create(frame): object
+    +register(name, faces: list): void
+    +clear(): void
+}
+@enduml

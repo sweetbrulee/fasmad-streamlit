@@ -1,0 +1,37 @@
+@startuml
+
+allow_mixing
+
+class AlarmAgent {
+  - timer_start: float
+  - timer_end: float
+  - group: str
+  - container_callfunc
+  - initial: bool
+  + start_timer()
+  + end_timer()
+  + reset_timers()
+  + bind_container_callfunc(container_func)
+  + run(group_this_frame, boxes)
+  + is_alarm_canceled(elapsed): bool
+  + on_alarm_canceled()
+  + on_alarm_persistent(filtered_count)
+  + _filtered_count(boxes)
+}
+
+class FireAlarmAgent {
+  + on_alarm_canceled()
+  + on_alarm_persistent(filtered_count)
+  + _filtered_count(boxes)
+}
+
+class FaceAlarmAgent {
+  + on_alarm_canceled()
+  + on_alarm_persistent(filtered_count)
+  + _filtered_count(boxes)
+}
+
+AlarmAgent <|-- FireAlarmAgent
+AlarmAgent <|-- FaceAlarmAgent
+
+@enduml
